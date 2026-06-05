@@ -1,0 +1,44 @@
+{
+  "Commands": {
+    "server_list": {
+      "description": "Lists servers by region or connection type",
+      "params": [
+        {
+          "flag": "--local",
+          "code": null,
+          "type": null
+        },
+        {
+          "flag": "--TCP",
+          "code": 5,
+          "type": "connection"
+        },
+        {
+          "flag": "--UDP",
+          "code": 3,
+          "type": "connection"
+        },
+        {
+          "flag": "--Nordlynx",
+          "code": 35,
+          "type": "connection"
+        },
+        {
+          "flag": "--france",
+          "code": 74,
+          "type": "region"
+        },
+        {
+          "flag": "--albania",
+          "code": 2,
+          "type": "region"
+        },
+        {
+          "flag": "--argentina",
+          "code": 10,
+          "type": "region"
+        }
+      ]
+    }
+  }
+}

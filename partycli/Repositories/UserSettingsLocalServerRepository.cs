@@ -7,7 +7,7 @@ namespace partycli.Repositories
 {
     public class UserSettingsLocalServerRepository : ILocalServerRepository
     {
-        public Task SaveAsync(List<VpnServer> servers)
+        public Task SaveAsync(List<ServerModel> servers)
         {
             string json = JsonSerializer.Serialize(servers);
 
@@ -18,15 +18,15 @@ namespace partycli.Repositories
             return Task.CompletedTask;
         }
 
-        public Task<List<VpnServer>> LoadAsync()
+        public Task<List<ServerModel>> LoadAsync()
         {
             string json = Properties.Settings.Default.serverlist;
 
             if (string.IsNullOrWhiteSpace(json))
-                return Task.FromResult(new List<VpnServer>());
+                return Task.FromResult(new List<ServerModel>());
 
-            var servers = JsonSerializer.Deserialize<List<VpnServer>>(json)
-                          ?? new List<VpnServer>();
+            var servers = JsonSerializer.Deserialize<List<ServerModel>>(json)
+                          ?? new List<ServerModel>();
 
             return Task.FromResult(servers);
         }

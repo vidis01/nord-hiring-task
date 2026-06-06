@@ -6,8 +6,8 @@ namespace partycli.Repositories
 {
     public interface IServerRepository
     {
-        Task<List<VpnServer>> GetAllServersListAsync();
-        Task<List<VpnServer>> GetAllServerByCountryListAsync(int countryId);
-        Task<List<VpnServer>> GetAllServerByProtocolListAsync(int protocol);
+        Task<List<ServerModel>> GetAllServersListAsync();
+        Task<List<ServerModel>> GetAllServerByCountryListAsync(int countryId);
+        Task<List<ServerModel>> GetAllServerByProtocolListAsync(int protocol);
     }
 }

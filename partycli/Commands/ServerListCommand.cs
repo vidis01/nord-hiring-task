@@ -1,4 +1,5 @@
-﻿using partycli.Models;
+﻿using partycli.Display;
+using partycli.Models;
 using partycli.Repositories;
 using System;
 using System.Collections.Generic;
@@ -10,19 +11,27 @@ namespace partycli.Commands
 {
     public class ServerListCommand
     {
+        private const string _commandName = "server_list";
         private readonly IServerRepository _repository;
         private readonly ILocalServerRepository _localRepository;
+        private readonly IServerFetchLogRepository _logRepository;
+        private readonly IServerDisplay _display;
 
-        // IServerRepository injected — never newed up inside
-        public ServerListCommand(IServerRepository repository, ILocalServerRepository localRepository)
+        public ServerListCommand(
+            IServerRepository repository, 
+            ILocalServerRepository localRepository, 
+            IServerFetchLogRepository logRepository,
+            IServerDisplay serverDisplay)
         {
             _repository = repository;
             _localRepository = localRepository;
+            _logRepository = logRepository;
+            _display = serverDisplay;
         }
 
         public Command Build(CommandSettings settings)
         {
-            var command = new Command("server_list", settings.Description);
+            var command = new Command(_commandName, settings.Description);
             var optionMap = BuildOptions(command, settings.Params);
 
             command.SetAction(async (parseResult) =>
@@ -31,30 +40,47 @@ namespace partycli.Commands
                     optionMap.TryGetValue(p.Flag, out var opt) &&
                     parseResult.GetValue(opt) == true);
 
-                List<VpnServer> servers;
+                List<ServerModel> servers;
+
+                if (param != null && param.Flag == "--local")
+                {
+                    servers = await _localRepository.LoadAsync();
+                    _display.Show(servers);
+
+                    return;
+                }
+                
+                string commandLabel;
 
                 if (param == null)
+                {
                     servers = await _repository.GetAllServersListAsync();
+                    commandLabel = _commandName; ;
+                }
                 else
+                {
                     servers = await FetchFilteredAsync(param);
+                    commandLabel = $"{_commandName} {param.Flag}";
+                }
 
                 if (servers == null) return;
 
                 await _localRepository.SaveAsync(servers);
 
-                PrintServers(servers);
+                await _logRepository.AppendAsync(new ServerFetchLog
+                {
+                    FetchedAt = DateTime.Now,
+                    Command = commandLabel,
+                    Servers = servers
+                });
+
+                _display.Show(servers);
             });
 
             return command;
         }
 
-        private async Task ExecuteAllAsync()
-        {
-            var servers = await _repository.GetAllServersListAsync();
-            PrintServers(servers);
-        }
-
-        private async Task<List<VpnServer>> FetchFilteredAsync(ParamEntry param)
+        private async Task<List<ServerModel>> FetchFilteredAsync(ParamEntry param)
         {
             switch (param.Type)
             {
@@ -70,28 +96,13 @@ namespace partycli.Commands
             }
         }
 
-        private static void PrintServers(List<VpnServer> servers)
-        {
-            if (servers.Count == 0)
-            {
-                Console.WriteLine("No servers found.");
-                return;
-            }
-
-            Console.WriteLine($"{"ID",-5} {"Name",-30} {"Country",-15} {"Protocol",-12} {"Status"}");
-            Console.WriteLine(new string('-', 75));
-
-            foreach (var s in servers)
-                Console.WriteLine($"{s.Id,-5} {s.Name,-30} {s.Country,-15} {s.Protocol,-12} {s.Status}");
-        }
-
         private static Dictionary<string, Option<bool>> BuildOptions(Command command, List<ParamEntry> paramEntries)
         {
             var map = new Dictionary<string, Option<bool>>();
 
             foreach (var param in paramEntries)
             {
-                var option = new Option<bool>(param.Flag, $"Target:{param.Flag.TrimStart('-')}");
+                var option = new Option<bool>(param.Flag);
                 command.Options.Add(option);
                 map[param.Flag] = option;
             }

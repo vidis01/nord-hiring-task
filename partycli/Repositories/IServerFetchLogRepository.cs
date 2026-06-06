@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 
 namespace partycli.Repositories
 {
-    public interface ILocalServerRepository
+    public interface IServerFetchLogRepository
     {
-        Task SaveAsync(List<ServerModel> servers);
-        Task<List<ServerModel>> LoadAsync();
+        Task AppendAsync(ServerFetchLog entry);
+        Task<List<ServerFetchLog>> LoadAllAsync();
         Task ClearAsync();
     }
 }

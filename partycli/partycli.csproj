@@ -130,12 +130,13 @@
     <Compile Include="Commands\ServerListCommand.cs" />
     <Compile Include="Configuration\ApiSettings.cs" />
     <Compile Include="Configuration\ConfigurationLoader.cs" />
+    <Compile Include="Display\IServerDisplay.cs" />
+    <Compile Include="Display\TableServerDisplay.cs" />
     <Compile Include="Infrastructure\DependencyContainer.cs" />
     <Compile Include="Models\CommandSettings.cs" />
     <Compile Include="Models\ParamEntry.cs" />
-    <Compile Include="Classes\ServerModel.cs" />
-    <Compile Include="Classes\LogModel.cs" />
-    <Compile Include="Models\VpnServer.cs" />
+    <Compile Include="Models\ServerFetchLog.cs" />
+    <Compile Include="Models\ServerModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -143,12 +144,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Enums\States.cs" />
-    <Compile Include="Models\VpnServerQuery.cs" />
     <Compile Include="Repositories\ILocalServerRepository.cs" />
+    <Compile Include="Repositories\IServerFetchLogRepository.cs" />
     <Compile Include="Repositories\IServerRepository.cs" />
     <Compile Include="Repositories\ServerRepository.cs" />
     <Compile Include="Repositories\UserSettingsLocalServerRepository.cs" />
+    <Compile Include="Repositories\UserSettingsServerFetchLogRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

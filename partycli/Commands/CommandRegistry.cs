@@ -26,8 +26,6 @@ namespace partycli.Commands
                     case "server_list":
                         cmd = container.GetRequiredService<ServerListCommand>().Build(command.Value);
                         break;
-                    case "config":
-                        break;
                     default:
                         Console.WriteLine("Command not implemented.");
                         break;
